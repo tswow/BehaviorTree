@@ -4,11 +4,14 @@ Project(BehaviorTree)
 
 set(BT_BUILD_TESTS ON CACHE BOOL "If tests should be built BehaviorTree")
 
-add_library(BehaviorTree INTERFACE src/BehaviorTree.h src/BehaviorTree.ipp)
+add_library(BehaviorTree INTERFACE)
+target_sources(BehaviorTree INTERFACE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/BehaviorTree.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/BehaviorTree.ipp
+)
 
 set_target_properties(BehaviorTree PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/src"
-    CXX_STANDARD 17
 )
 
 if(${BT_BUILD_TESTS})
