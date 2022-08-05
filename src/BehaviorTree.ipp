@@ -53,14 +53,14 @@ Branch<C,LC,DC>::Branch(BehaviorTreeContext<C,LC,DC>* gen, BranchType type)
 }
 
 template <typename C, typename LC, typename DC>
-Branch<C,LC,DC>* Branch<C,LC,DC>::set_loops(uint64_t loops)
+Branch<C,LC,DC>* Branch<C,LC,DC>::SetLoops(uint64_t loops)
 {
     m_loops = loops;
     return this;
 }
 
 template <typename C, typename LC, typename DC>
-Branch<C,LC,DC>* Branch<C,LC,DC>::set_attempts(uint64_t attempts)
+Branch<C,LC,DC>* Branch<C,LC,DC>::SetAttempts(uint64_t attempts)
 {
     m_attempts = attempts;
     return this;

@@ -132,8 +132,8 @@ template <typename C, typename LC, typename DC>
 class Branch : public BranchNode<C,LC,DC,Branch<C,LC,DC>>
 {
 public:
-    Branch<C,LC,DC>* set_loops(uint64_t loops);
-    Branch<C,LC,DC>* set_attempts(uint64_t retries);
+    Branch<C,LC,DC>* SetLoops(uint64_t loops);
+    Branch<C,LC,DC>* SetAttempts(uint64_t retries);
     Branch(BehaviorTreeContext<C,LC,DC>* gen, BranchType type);
 protected:
     BranchType m_type;
