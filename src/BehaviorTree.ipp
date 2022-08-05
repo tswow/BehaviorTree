@@ -192,14 +192,18 @@ T* BranchNode<C,LC,DC,T>::AddNode(Node<C,LC,DC>* node)
 template <typename C, typename LC, typename DC,typename T>
 T* BranchNode<C,LC,DC,T>::AddMultiplexer(LeafCallback<C,LC> callback, Builder<Multiplexer<C,LC,DC>> builder)
 {
-    builder(this->m_children.emplace_back(this->m_gen->CreateMultiplexer(callback)));
+    Multiplexer<C,LC,DC>* multiplexer = this->m_gen->CreateMultiplexer(callback);
+    this->m_children.emplace_back(multiplexer);
+    builder(multiplexer);
     return dynamic_cast<T*>(this);
 }
 
 template <typename C, typename LC, typename DC,typename T>
 T* BranchNode<C,LC,DC,T>::AddMultiplexer(Builder<Multiplexer<C,LC,DC>> builder)
 {
-    builder(this->m_children.emplace_back(this->m_gen->CreateMultiplexer()));
+    Multiplexer<C,LC,DC>* multiplexer = this->m_gen->CreateMultiplexer();
+    this->m_children.emplace_back(multiplexer);
+    builder(multiplexer);
     return dynamic_cast<T*>(this);
 }
 
