@@ -81,8 +81,8 @@ template <typename C, typename LC, typename DC, typename T>
 class DecorableNode : public Node<C,LC,DC>
 {
 public:
-    T* decorate(DecoratorCallback<C,DC> predicate);
-    T* decorate(std::vector<DecoratorCallback<C,DC>> predicates);
+    T* Decorate(DecoratorCallback<C,DC> predicate);
+    T* Decorate(std::vector<DecoratorCallback<C,DC>> predicates);
 protected:
     DecorableNode(BehaviorTreeContext<C,LC,DC>* gen);
 };

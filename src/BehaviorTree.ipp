@@ -130,14 +130,14 @@ void BehaviorTreeContext<C,LC,DC>::VerifyNode(Node<C,LC,DC>* node)
 //
 
 template <typename C, typename LC, typename DC, typename T>
-T* DecorableNode<C,LC,DC, T>::decorate(DecoratorCallback<C,DC> predicate)
+T* DecorableNode<C,LC,DC, T>::Decorate(DecoratorCallback<C,DC> predicate)
 {
     this->m_decorations.push_back(predicate);
     return dynamic_cast<T*>(this);
 }
 
 template <typename C, typename LC, typename DC, typename T>
-T* DecorableNode<C,LC,DC,T>::decorate(std::vector<DecoratorCallback<C,DC>> predicates)
+T* DecorableNode<C,LC,DC,T>::Decorate(std::vector<DecoratorCallback<C,DC>> predicates)
 {
     this->m_decorations.insert(this->m_decorations.end(), predicates.begin(), predicates.end());
     return dynamic_cast<T*>(this);
