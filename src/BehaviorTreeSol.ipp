@@ -74,7 +74,7 @@ void LuaRegisterBranchNode(std::string const& name, sol::state& state)
 }
 
 template <typename C, typename LC, typename DC>
-void LuaRegisterBehaviorTree(sol::state & state, std::string const& nameBase)
+void LuaRegisterBehaviorTree(sol::state & state, std::string const& nameBase, BehaviorTreeContext<C,LC,DC>* globalCtx = nullptr, std::string const& globalCtxPrefix = "", std::string const& globalCtxInfix = "", std::string const& globalCtxSuffix = "")
 {
     sol::usertype<Node<C,LC,DC>> node = state.new_usertype<Node<C, LC, DC>>(nameBase + "Node");
 
@@ -107,25 +107,40 @@ void LuaRegisterBehaviorTree(sol::state & state, std::string const& nameBase)
     sol::usertype<BehaviorTreeContext<C, LC, DC>> context = state.new_usertype<BehaviorTreeContext<C, LC, DC>>(nameBase+"BehaviorTreeContext");
     context.set_function("CreateSequence", &BehaviorTreeContext<C,LC,DC>::CreateSequence);
     context.set_function("CreateSelector", &BehaviorTreeContext<C,LC,DC>::CreateSelector);
-    context.set_function("CreateLeaf",
+    auto createLeaf =
         [](BehaviorTreeContext<C, LC, DC>* ctx, sol::protected_function func)
         {
             return ctx->CreateLeaf([=](C& ctx, LC& lc) {
                 return func(ctx, lc);
             });
-        }
-    );
-
-    context.set_function("CreateMultiplexer",sol::overload(
+        };
+    auto createMultiplexerA =
         [](BehaviorTreeContext<C, LC, DC>* ctx, sol::protected_function func)
         {
             return ctx->CreateMultiplexer([=](C& ctx, LC& lc) {
                 return func(ctx, lc);
-            });
-        },
-        [](BehaviorTreeContext<C, LC, DC>* ctx, sol::protected_function func)
+                });
+        };
+    auto createMultiplexerB =
+        [](BehaviorTreeContext<C, LC, DC>* ctx)
         {
             return ctx->CreateMultiplexer();
         }
-    ));
+    ;
+
+    context.set_function("CreateLeaf",createLeaf);
+    context.set_function("CreateMultiplexer", sol::overload(createMultiplexerA,createMultiplexerB));
+    if (globalCtx)
+    {
+        state.set_function(globalCtxPrefix + "Create " + globalCtxInfix + "Sequence" + globalCtxSuffix,
+            [=]() { return globalCtx->CreateSequence(); });
+        state.set_function(globalCtxPrefix + "Create" + globalCtxInfix + "Selector" + globalCtxSuffix,
+            [=]() { return globalCtx->CreateSelector(); });
+        state.set_function(globalCtxPrefix + "Create" + globalCtxInfix + "Leaf" + globalCtxSuffix,
+            [=](sol::protected_function func) { return createLeaf(globalCtx,func); });
+        state.set_function(globalCtxPrefix + "Create"  + globalCtxInfix + "Multiplexer" + globalCtxSuffix, sol::overload(
+            [=](sol::protected_function callback) { return createMultiplexerA(globalCtx,callback); },
+            [=]() { return createMultiplexerB(globalCtx); }
+        ));
+    }
 }
