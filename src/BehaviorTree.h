@@ -216,3 +216,6 @@ private:
 };
 
 #include "BehaviorTree.ipp"
+#ifdef BT_SOL2
+#include "BehaviorTreeSol.ipp"
+#endif
