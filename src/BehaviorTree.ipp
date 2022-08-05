@@ -222,24 +222,24 @@ inline TraversalMode ResultToTraversal(Result result)
     }
 }
 
-bool TreeTimer::HasPassed(uint64_t now)
+inline bool TreeTimer::HasPassed(uint64_t now)
 {
     return m_start + m_delay <= now;
 }
 
-void TreeTimer::Set(uint64_t now, uint64_t delay)
+inline void TreeTimer::Set(uint64_t now, uint64_t delay)
 {
     m_start = now;
     m_delay = delay;
 }
 
-void TreeTimer::Disable()
+inline void TreeTimer::Disable()
 {
     m_start = 0;
     m_delay = UINT64_MAX;
 }
 
-void TreeTimer::Clear()
+inline void TreeTimer::Clear()
 {
     m_start = 0;
     m_delay = 0;
