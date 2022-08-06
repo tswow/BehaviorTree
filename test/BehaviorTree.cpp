@@ -60,7 +60,7 @@ TEST_CASE("Leaf with delay") {
 TEST_CASE("Decorator without delay") {
     BehaviorTreeContext<TP> ctx;
     Leaf<TP>* leaf = ctx.CreateLeaf([](TP& vec,MS&) { return 0; });
-    leaf->decorate([](TP& vec,MS&) { vec.push_back(0); return 0; });
+    leaf->Decorate([](TP& vec,MS&) { vec.push_back(0); return 0; });
     TreeExecutor<TP> exec(&ctx,leaf);
     TP vec;
 
@@ -79,7 +79,7 @@ TEST_CASE("Decorator without delay") {
 TEST_CASE("Decorator with delay") {
     BehaviorTreeContext<TP> ctx;
     Leaf<TP>* leaf = ctx.CreateLeaf([](TP& vec,MS&) { return 0; });
-    leaf->decorate([](TP& vec,MS&) { vec.push_back(0); return 1; });
+    leaf->Decorate([](TP& vec,MS&) { vec.push_back(0); return 1; });
     TreeExecutor<TP> exec(&ctx,leaf);
     TP vec;
 
@@ -105,7 +105,7 @@ TEST_CASE("Leaf + decorator")
 {
     BehaviorTreeContext<TP> ctx;
     Leaf<TP>* leaf = ctx.CreateLeaf([](TP& vec,MS&) { vec.push_back(0); return 0; });
-    leaf->decorate([](TP& vec,MS&) { vec.push_back(1); return 0; });
+    leaf->Decorate([](TP& vec,MS&) { vec.push_back(1); return 0; });
     TreeExecutor<TP> exec(&ctx,leaf);
     TP vec;
 
@@ -125,8 +125,8 @@ TEST_CASE("Leaf + decorator + decorator")
 {
     BehaviorTreeContext<TP> ctx;
     Leaf<TP>* leaf = ctx.CreateLeaf([](TP& vec,MS&) { vec.push_back(0); return 0; });
-    leaf->decorate([](TP& vec,MS&) { vec.push_back(1); return 0; });
-    leaf->decorate([](TP& vec,MS&) { vec.push_back(2); return 0; });
+    leaf->Decorate([](TP& vec,MS&) { vec.push_back(1); return 0; });
+    leaf->Decorate([](TP& vec,MS&) { vec.push_back(2); return 0; });
     TreeExecutor<TP> exec(&ctx,leaf);
     TP vec;
 
@@ -204,10 +204,10 @@ TEST_CASE("Deep decorators")
     BehaviorTreeContext<TP> ctx;
     Branch<TP>* root = ctx.CreateSequence()
         ->AddSequence([](Branch<TP>* builder) { builder
-            ->decorate([](TP& vec,MS&) { vec.push_back(0); return 0; })
+            ->Decorate([](TP& vec,MS&) { vec.push_back(0); return 0; })
             ->AddLeaf([](TP& vec,MS&) { vec.push_back(1); return 0; })
         ;})
-        ->decorate([](TP& vec,MS&) { vec.push_back(2); return 0; })
+        ->Decorate([](TP& vec,MS&) { vec.push_back(2); return 0; })
         ;
     TreeExecutor<TP> exec(&ctx,root);
     TP vec;
@@ -228,11 +228,11 @@ TEST_CASE("Deep decorator leaf unload") {
     BehaviorTreeContext<TP> ctx;
     Branch<TP>* root = ctx.CreateSequence()
         ->AddSequence([](Branch<TP>* builder) { builder
-            ->decorate([](TP& vec,MS&) { vec.push_back(0); return 0; })
+            ->Decorate([](TP& vec,MS&) { vec.push_back(0); return 0; })
             ->AddLeaf([](TP& vec,MS&) { vec.push_back(1); return Result::SUCCESS; })
             ; })
-        ->decorate([](TP& vec,MS&) { vec.push_back(2); return 0; })
-        ->decorate([](TP& vec,MS&) { vec.push_back(3); return 0; })
+        ->Decorate([](TP& vec,MS&) { vec.push_back(2); return 0; })
+        ->Decorate([](TP& vec,MS&) { vec.push_back(3); return 0; })
         ;
     TreeExecutor<TP> exec(&ctx,root);
     TP vec;
@@ -248,13 +248,13 @@ TEST_CASE("Deep decorator unload") {
     BehaviorTreeContext<TP> ctx;
     Branch<TP>* root = ctx.CreateSequence()
         ->AddSequence([](Branch<TP>* builder) { builder
-            ->decorate([](TP& v,MS&) { v.push_back(0); return 0; })
+            ->Decorate([](TP& v,MS&) { v.push_back(0); return 0; })
             ->AddLeaf([](TP& v,MS&) { v.push_back(1); return Result::SUCCESS; })
             ; })
         ->AddSequence([](Branch<TP>* builder) { builder
             ->AddLeaf([](TP& v,MS&) { v.push_back(2); return 0; })
             ; })
-        ->decorate([](TP& v,MS&) { v.push_back(3); return 0; })
+        ->Decorate([](TP& v,MS&) { v.push_back(3); return 0; })
         ;
 
     TreeExecutor<TP> exec(&ctx,root);
@@ -353,14 +353,14 @@ TEST_CASE("Decorator state") {
     auto leaf = ctx.CreateLeaf([](TP& v, MS&) { return 0; });
     TreeExecutor<TP, MS, InitInteger> exec(&ctx,leaf);
     SECTION("Clears after reset") {
-        leaf->decorate([](TP& v, InitInteger& i) { v.push_back(i.i++); return Result::FAILURE; });
+        leaf->Decorate([](TP& v, InitInteger& i) { v.push_back(i.i++); return Result::FAILURE; });
         exec.Update(vec, 0);
         exec.Update(vec, 0);
         REQUIRE(vec == TP({ 0,0 }));
     }
 
     SECTION("Stays without reset") {
-        leaf->decorate([](TP& v, InitInteger& i) { v.push_back(i.i++); return 0; });
+        leaf->Decorate([](TP& v, InitInteger& i) { v.push_back(i.i++); return 0; });
         exec.Update(vec, 0);
         exec.Update(vec, 0);
         REQUIRE(vec == TP({ 0,1 }));
