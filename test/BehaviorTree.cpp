@@ -272,7 +272,7 @@ TEST_CASE("Sequence Loops") {
     BehaviorTreeContext<int&> ctx;
     Branch<int&>* root = ctx.CreateSequence()
         ->AddSequence([](Branch<int&>* builder) { builder
-            ->set_loops(25)
+            ->SetLoops(25)
             ->AddLeaf([](int& v,MS&) { v++; return Result::SUCCESS; })
             ; })
         ;
@@ -286,7 +286,7 @@ TEST_CASE("Sequence attempts") {
     BehaviorTreeContext<int&> ctx;
     Branch<int&> * root = ctx.CreateSequence()
         ->AddSequence([](Branch<int&>* builder) { builder
-            ->set_attempts(25)
+            ->SetAttempts(25)
             ->AddLeaf([](int& v,MS&) { v++; return Result::FAILURE; })
             ; })
         ;
